@@ -1,23 +1,7 @@
-const {StatusCodes}=require("../../config")
-const express=require("express")
-router=express.Router();
-router.get("/info",(req,res)=>{
-    res.json({
-        sucess:true,
-        data:"THIS IS INFO",
-        error:{},
-        status:StatusCodes.OK
+const express= require("express")
+const {infoController}= require('../../controller')
+const router= express.Router()
+router.use("/info",infoController)
 
-    })
-})
-router.get("/about",(req,res)=>{
-    res.json({
-        sucess:true,
-        data:"THIS IS ABOUT",
-        error:{},
-        status:StatusCodes.OK
 
-    })
-})
-
-module.exports=router
+module.exports={V1routes:router}

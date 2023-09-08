@@ -1,5 +1,4 @@
-const {StatusCodes}= require("./info-config")
-
+const {PORT}=require("./server-config")
 module.exports={
-    StatusCodes
+    ServerPort:PORT
 }

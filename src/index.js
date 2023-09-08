@@ -1,10 +1,29 @@
-const {port}= require("./config")
 const express= require("express")
-const app=express()
-const route=require("./routes")
+const {router}= require("./routes")
 
-app.use("/api",route)
+const app= express()
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+
+app.get("/",(req,res)=>{
+    res.send("Hello")
+})
+app.use("/api",router)
 
 app.listen(3000,()=>{
-    console.log("Started successfully")
+    console.log("server started")
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
