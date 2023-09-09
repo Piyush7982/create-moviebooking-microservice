@@ -1,4 +1,4 @@
-const customError= require("../utils/errors") 
+const customError= require("../util/errors") 
 const {StatusCodes}= require("http-status-codes")
 
 class crud{
@@ -50,4 +50,4 @@ class crud{
     }
 
 }
-module.exports={crud}
+module.exports=crud
