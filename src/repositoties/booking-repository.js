@@ -48,7 +48,8 @@ class bookingRepository extends crud{
             const response= await Booking.update(newData, {where: searchData},{transaction:transaction})
             return response
         } catch (error) {
-            throw new CustomError(error.name,StatusCodes.BAD_REQUEST)
+            // throw new CustomError(error.name,StatusCodes.BAD_REQUEST)
+            throw error
         }        
     }
 }

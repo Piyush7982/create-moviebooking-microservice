@@ -1,39 +1,65 @@
 const {BookingService}= require("../services")
 const {SuccessResponse,ErrorResponse}= require("../util/common")
+const {TokenUtil}= require("../util/common")
+
+
 
 async function bookingCreate(req,res){
     try {
-        const response= await BookingService.createBooking({userId:req.body.userId,showId:req.body.showId,totalTickets:req.body.totalTickets})
+        console.log("inside booking")
+        const uid= await TokenUtil.decodeToken(req.cookies.access_token)
+        
+        const response= await BookingService.createBooking({userId:uid.id,showId:req.body.showId,totalTickets:req.body.totalTickets})
         SuccessResponse.Data=response
         SuccessResponse.Message="succesfully created"
         return res.json(SuccessResponse)
         
     } catch (error) {
         
-        res.json({
-            status:"failed",
-            error:"",
-            comment:"failed to  create booking",
-            
-        })
+        ErrorResponse.Error=error
+        res
+        // .status(error.statusCode)
+        .json(ErrorResponse)
+        
         throw error
     }
 }
-async function bookingUpdatePayment(req,res){
+async function bookingFindAll(req,res){
+    
     try {
-        const response= await BookingService.isPaymentSuccesfull({id:req.body.bookingId},req.body.status)
+        const response= await BookingService.findAllBooking()
         SuccessResponse.Data=response
         SuccessResponse.Message="succesfully created"
         return res.json(SuccessResponse)
         
     } catch (error) {
         
-        res.json({
-            status:"failed",
-            error:"",
-            comment:"failed to  create booking",
-            
-        })
+        ErrorResponse.Error=error
+        res
+        // .status(error.statusCode)
+        .json(ErrorResponse)
+        
+        throw error
+    }
+}
+
+
+
+async function bookingUpdatePayment(req,res){
+    try {
+        const status= req.body.status
+        const response= await BookingService.isPaymentSuccesfull({id:req.body.bookingId},status)
+        SuccessResponse.Data=response
+        SuccessResponse.Message="succesfully created"
+        return res.json(SuccessResponse)
+        
+    } catch (error) {
+        
+        ErrorResponse.Error=error
+        res
+        // .status(error.statusCode)
+        .json(ErrorResponse)
+        
         throw error
     }
 }
@@ -47,16 +73,15 @@ async function bookingDelete(req,res){
         
     } catch (error) {
         
-        res.json({
-            status:"failed",
-            error:"",
-            comment:"failed to  create booking",
-            
-        })
+        ErrorResponse.Error=error
+        res
+        // .status(error.statusCode)
+        .json(ErrorResponse)
+        
         throw error
     }
 }
 
-const bookingController={bookingCreate,bookingDelete,bookingUpdatePayment}
+const bookingController={bookingCreate,bookingDelete,bookingUpdatePayment,bookingFindAll}
 module.exports=bookingController
     

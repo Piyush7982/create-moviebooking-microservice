@@ -6,18 +6,28 @@ const { StatusCodes } = require("http-status-codes");
 const { BookingStatus } = require("../util/common");
 const booking= new BookingRepository()
 
-
+async function findAllBooking(){
+    try {
+        const response = await booking.findAll()
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 async function createBooking(data){
     try {
+        if(!data.userId){
+            throw new CustomError("Id cannot be null",StatusCodes.BAD_REQUEST)
+        }
         const transaction = await db.sequelize.transaction();
         const noOfSeat=data.totalTickets
         const showId=data.showId
-        const response = await axios.get(`http://localhost:3000/api/v1/show/${showId}`)
+        const response = await axios.get(`http://localhost:5000/api/v1/show/${showId}`)
         if(response.data.Status=="Success"){
             const availableSeats=response.data.Data.availableSeats
             
             if(noOfSeat<=availableSeats){
-                const createBooking = await axios.put(`http://localhost:3000/api/v1/show/${noOfSeat}`,{id:showId})
+                const createBooking = await axios.put(`http://localhost:5000/api/v1/show/${noOfSeat}`,{id:showId})
                 const bookingPayload={...data,totalPrice:(parseInt(createBooking.data.Data.costEach)*noOfSeat)}
                
                 try {
@@ -44,10 +54,14 @@ async function createBooking(data){
 }
 
 async function isPaymentSuccesfull(data,status){
-    console.log(data,status)
-    if(status=="true"){
+   
+    if(status){
         const transaction = await db.sequelize.transaction();
+        
         const response= await booking.searchBooking(data.id,transaction)
+        if(!response){
+            throw new CustomError("Booking Not Found", StatusCodes.BAD_GATEWAY)
+        }
         if(response.dataValues.Status==BookingStatus.status.BOOKED){
             throw new CustomError("Tickets already booked",StatusCodes.FORBIDDEN)
         }
@@ -71,7 +85,7 @@ async function deleteBooking(bookingId){
         const response= await booking.searchBooking(bookingId,transaction)
         const showId=response.dataValues.showId
         const noOfSeat=response.dataValues.totalTickets
-        const updateSeats = await axios.put(`http://localhost:3000/api/v1/show/${noOfSeat}`,{id:showId,inc:true})
+        const updateSeats = await axios.put(`http://localhost:5000/api/v1/show/${noOfSeat}`,{id:showId,inc:true})
         if (updateSeats.data.Status=="Success"){
             const deleteBooking=await booking.DeleteBooking(bookingId,transaction)
             return deleteBooking
@@ -84,6 +98,6 @@ async function deleteBooking(bookingId){
         throw error
     }
 }
-const bookingService={createBooking,deleteBooking,isPaymentSuccesfull}
+const bookingService={createBooking,deleteBooking,isPaymentSuccesfull,findAllBooking}
 module.exports=bookingService
     

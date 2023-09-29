@@ -6,7 +6,7 @@ const router= express.Router()
 router.get("/",(req,res)=>{
    
     try {
-        SuccessResponse.Data="Inside Info Controller,Api is working"
+        SuccessResponse.Data="Inside Info Controller booking,Api is working"
         return res.json({
             SuccessResponse
         })
