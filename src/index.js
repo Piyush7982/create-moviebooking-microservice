@@ -1,8 +1,9 @@
 const express= require("express")
 const cookieParser = require('cookie-parser')
-const axios = require("axios")
 const {router}= require("./routes")
-const {Booking}= require("./models")
+const {ServerPort}= require("./config")
+
+
 const app= express()
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -10,8 +11,8 @@ app.use(cookieParser())
 app.use("/api",router)
 
 
-app.listen(4001,()=>{
-    console.log("server started")
+app.listen(ServerPort,()=>{
+    console.log(`Server Started on Port ${ServerPort}`)
 })
 // async function testing(){
 //     const response= await Booking.findByPk(1)
